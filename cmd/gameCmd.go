@@ -23,6 +23,12 @@ func GameInput(g *game.Game) {
 	} else if strings.HasPrefix(command, "exit") {
 		fmt.Println("Exiting game")
 		os.Exit(0)
+	} else if strings.HasPrefix(command, "look") {
+		lookCommand(g)
+	} else if command == "clear" {
+		ClearScreen()
+	} else {
+		fmt.Println("Invalid command. Options are: move up, move down, move left, move right, look, clear, exit")
 	}
 }
 
@@ -49,4 +55,17 @@ func moveCommandToDirection(moveCommand string) *game.Direction {
 
 func removePrefix(s string, prefix string) string {
 	return strings.TrimSpace(strings.TrimPrefix(s, prefix))
+}
+
+func lookCommand(g *game.Game) {
+	fmt.Println("You look around and see the following:")
+	currentTile := g.GetPlayerTile()
+	fmt.Println("Current tile:", currentTile.Name)
+	fmt.Println("Enemies:", currentTile.Enemies)
+	fmt.Println("Items:", currentTile.Items)
+
+	fmt.Println("To the north you see a", g.World.GetTile(g.PlayerPositionX, g.PlayerPositionY+1).Name)
+	fmt.Println("To the south you see a", g.World.GetTile(g.PlayerPositionX, g.PlayerPositionY-1).Name)
+	fmt.Println("To the east you see a", g.World.GetTile(g.PlayerPositionX+1, g.PlayerPositionY).Name)
+	fmt.Println("To the west you see a", g.World.GetTile(g.PlayerPositionX-1, g.PlayerPositionY).Name)
 }

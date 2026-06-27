@@ -10,11 +10,14 @@ import (
 	"time"
 )
 
+const CURRENT_VERSION = 1
+
 type SaveFile struct {
 	ID        string    `json:"id"`
 	Game      game.Game `json:"game"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	Version   int       `json:"version"`
 }
 
 func newSaveFile(g game.Game) SaveFile {
@@ -23,6 +26,7 @@ func newSaveFile(g game.Game) SaveFile {
 		Game:      g,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		Version:   CURRENT_VERSION,
 	}
 }
 

@@ -62,3 +62,11 @@ func InputBool() bool {
 	}
 	return b
 }
+
+func ClearScreen() {
+	if os.Getenv("OS") == "windows" {
+		fmt.Print("\033[H\033[2J")
+	} else {
+		fmt.Print("\033[H\033[2J")
+	}
+}
