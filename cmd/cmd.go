@@ -1,72 +1,38 @@
 package cmd
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strconv"
+	"rpg/cmd/commands"
+	"rpg/cmd/utils"
+	"rpg/internal/game"
 	"strings"
 )
 
-func InputString() string {
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
-		os.Exit(1)
-	}
-	return strings.TrimSpace(input)
+func splitUserInputToArgs(input string) []string {
+	return strings.Split(input, " ")
 }
 
-func InputInt() int {
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
-		os.Exit(1)
-	}
-	n, err := strconv.Atoi(strings.TrimSpace(input))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error parsing input: %v\n", err)
-		os.Exit(1)
-	}
-	return n
+type command struct {
+	name        string
+	description string
+	keywords    []string
+	commandFunc func(*game.Game, []string) error
 }
 
-func InputFloat() float64 {
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
-		os.Exit(1)
-	}
-	f, err := strconv.ParseFloat(strings.TrimSpace(input), 64)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error parsing input: %v\n", err)
-		os.Exit(1)
-	}
-	return f
-}
-
-func InputBool() bool {
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error reading input: %v\n", err)
-		os.Exit(1)
-	}
-	b, err := strconv.ParseBool(strings.TrimSpace(input))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error parsing input: %v\n", err)
-		os.Exit(1)
-	}
-	return b
-}
-
-func ClearScreen() {
-	if os.Getenv("OS") == "windows" {
-		fmt.Print("\033[H\033[2J")
-	} else {
-		fmt.Print("\033[H\033[2J")
+// GameInput is the main function for the game. It takes a game and a command and executes the command.
+func GameLoop(g *game.Game) {
+	for {
+		fmt.Print("Enter command: ")
+		args := splitUserInputToArgs(utils.InputString())
+		command := commands.GetCommandFromInputArgs(args)
+		if command == nil {
+			fmt.Println("Invalid command. Options are: move up, move down, move left, move right, look, clear, exit")
+			continue
+		}
+		err := command.CommandFunc(g, args)
+		if err != nil {
+			fmt.Println("Error:", err)
+			continue
+		}
 	}
 }

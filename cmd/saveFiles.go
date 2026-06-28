@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"rpg/cmd/utils"
 	"rpg/internal/game"
 	"rpg/internal/game/player"
 	"rpg/internal/game/world"
@@ -13,7 +14,7 @@ func SaveFilesMenu() game.Game {
 	fmt.Println("2. Create new world")
 	fmt.Print("Choose an option: ")
 
-	switch InputString() {
+	switch utils.InputString() {
 	case "1", "load":
 		return loadSavedGame()
 	case "2", "new", "create":
@@ -42,7 +43,7 @@ func loadSavedGame() game.Game {
 	}
 
 	fmt.Print("Choose a save file: ")
-	choice := InputInt()
+	choice := utils.InputInt()
 	if choice < 1 || choice > len(saveFiles) {
 		fmt.Println("Invalid choice.")
 		return loadSavedGame()
@@ -55,15 +56,15 @@ func loadSavedGame() game.Game {
 
 func createNewGame() game.Game {
 	fmt.Print("World name: ")
-	worldName := InputString()
+	worldName := utils.InputString()
 	fmt.Print("World width: ")
-	width := InputInt()
+	width := utils.InputInt()
 	fmt.Print("World height: ")
-	height := InputInt()
+	height := utils.InputInt()
 	worldMap := world.New(worldName, width, height)
 
 	fmt.Print("Player name: ")
-	playerName := InputString()
+	playerName := utils.InputString()
 	player := player.New(playerName)
 
 	return game.New(player, worldMap)

@@ -9,7 +9,7 @@ func main() {
 	game := cmd.SaveFilesMenu()
 
 	for {
-		cmd.GameInput(&game)
+		cmd.GameLoop(&game)
 		savefiles.SaveGame(game)
 	}
 }

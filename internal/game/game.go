@@ -29,21 +29,21 @@ func New(p player.Player, w world.WorldMap) Game {
 type Direction string
 
 const (
-	DirectionUp    Direction = "up"
-	DirectionDown  Direction = "down"
-	DirectionLeft  Direction = "left"
-	DirectionRight Direction = "right"
+	DirectionNorth Direction = "north"
+	DirectionSouth Direction = "south"
+	DirectionEast  Direction = "east"
+	DirectionWest  Direction = "west"
 )
 
 func (g *Game) MovePlayer(direction Direction) {
 	switch direction {
-	case DirectionUp:
+	case DirectionNorth:
 		g.PlayerPositionY--
-	case DirectionDown:
+	case DirectionSouth:
 		g.PlayerPositionY++
-	case DirectionLeft:
+	case DirectionEast:
 		g.PlayerPositionX--
-	case DirectionRight:
+	case DirectionWest:
 		g.PlayerPositionX++
 	}
 }
