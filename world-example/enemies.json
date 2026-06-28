@@ -1,0 +1,20 @@
+[
+    {
+        "id": "goblin-1",
+        "name": "Goblin",
+        "health": 100,
+        "damage": 10,
+        "speed": 10,
+        "level": 1,
+        "description": "A small, green creature with a sharp claw."
+    },
+    {
+        "id": "orc-1",
+        "name": "Orc",
+        "health": 100,
+        "damage": 10,
+        "speed": 10,
+        "level": 1,
+        "description": "A large, red creature with a sharp axe."
+    }
+]

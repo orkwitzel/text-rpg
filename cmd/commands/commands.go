@@ -49,12 +49,20 @@ func lookCommand(g *game.Game, args []string) error {
 	fmt.Println("Enemies:", currentTile.Enemies)
 	fmt.Println("Items:", currentTile.Items)
 
-	fmt.Println("To the north you see a", g.World.GetTile(g.PlayerPositionX, g.PlayerPositionY+1).Name)
-	fmt.Println("To the south you see a", g.World.GetTile(g.PlayerPositionX, g.PlayerPositionY-1).Name)
-	fmt.Println("To the east you see a", g.World.GetTile(g.PlayerPositionX+1, g.PlayerPositionY).Name)
-	fmt.Println("To the west you see a", g.World.GetTile(g.PlayerPositionX-1, g.PlayerPositionY).Name)
+	lookDirection(g, "north", g.PlayerPositionX, g.PlayerPositionY+1)
+	lookDirection(g, "south", g.PlayerPositionX, g.PlayerPositionY-1)
+	lookDirection(g, "east", g.PlayerPositionX+1, g.PlayerPositionY)
+	lookDirection(g, "west", g.PlayerPositionX-1, g.PlayerPositionY)
 
 	return nil
+}
+
+func lookDirection(g *game.Game, direction string, x, y int) {
+	if !g.World.InBounds(x, y) {
+		fmt.Println("To the", direction, "you see the edge of the world.")
+		return
+	}
+	fmt.Println("To the", direction, "you see a", g.World.GetTile(x, y).Name)
 }
 
 func exitCommand(_ *game.Game, args []string) error {

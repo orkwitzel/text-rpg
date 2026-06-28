@@ -2,16 +2,19 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"rpg/cmd/utils"
 	"rpg/internal/game"
 	"rpg/internal/game/player"
 	"rpg/internal/game/world"
 	savefiles "rpg/internal/saveFiles"
+	worldloader "rpg/internal/world-loader"
 )
 
 func SaveFilesMenu() game.Game {
 	fmt.Println("1. Load saved game")
 	fmt.Println("2. Create new world")
+	fmt.Println("3. Load world from directory")
 	fmt.Print("Choose an option: ")
 
 	switch utils.InputString() {
@@ -19,8 +22,10 @@ func SaveFilesMenu() game.Game {
 		return loadSavedGame()
 	case "2", "new", "create":
 		return createNewGame()
+	case "3", "load-world":
+		return loadWorldFromDirectory()
 	default:
-		fmt.Println("Invalid choice. Enter 1 or 2.")
+		fmt.Println("Invalid choice. Enter 1, 2, or 3.")
 		return SaveFilesMenu()
 	}
 }
@@ -52,6 +57,17 @@ func loadSavedGame() game.Game {
 	selected := saveFiles[choice-1]
 	fmt.Printf("Loaded %s.\n", selected.Game.World.Name)
 	return selected.Game
+}
+
+func loadWorldFromDirectory() game.Game {
+	fmt.Print("World directory: ")
+	worldDir := utils.InputString()
+	if _, err := os.Stat(worldDir); os.IsNotExist(err) {
+		utils.ClearScreen()
+		fmt.Println("World directory does not exist.")
+		return SaveFilesMenu()
+	}
+	return worldloader.LoadWorld(worldDir)
 }
 
 func createNewGame() game.Game {

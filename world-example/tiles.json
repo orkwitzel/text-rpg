@@ -1,0 +1,34 @@
+[
+    {
+        "id": "grass-1",
+        "name": "Grass",
+        "type": "grass",
+        "enemies": [],
+        "items": ["healing-potion-1"],
+        "description": "A grassy field."
+    },
+    {
+        "id": "water-1",
+        "name": "Water",
+        "type": "water",
+        "enemies": [],
+        "items": ["healing-potion-1"],
+        "description": "A body of water."
+    },
+    {
+        "id": "sand-1",
+        "name": "Sand",
+        "type": "sand",
+        "enemies": [],
+        "items": ["healing-potion-1"],
+        "description": "A sandy beach."
+    },
+    {
+        "id": "rock-1",
+        "name": "Rock",
+        "type": "rock",
+        "enemies": [],
+        "items": ["healing-potion-1"],
+        "description": "A rocky outcrop."
+    }
+]

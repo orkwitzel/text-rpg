@@ -28,6 +28,10 @@ func New(name string, width int, height int) WorldMap {
 	}
 }
 
+func (m *WorldMap) InBounds(x int, y int) bool {
+	return x >= 0 && x < m.Width && y >= 0 && y < m.Height
+}
+
 func (m *WorldMap) GetTile(x int, y int) tiles.Tile {
 	return m.Tiles[y][x]
 }

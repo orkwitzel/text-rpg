@@ -1,0 +1,44 @@
+[
+    {
+        "id": "sword-1",
+        "name": "Sword",
+        "description": "A sharp blade",
+        "value": 100,
+        "weight": 10,
+        "can_have_multiple": false,
+        "quantity": 1,
+        "item_type": "weapon",
+        "effects": {
+            "damage": 10
+        },
+        "required_level": 1
+    },
+    {
+        "id": "shield-1",
+        "name": "Shield",
+        "description": "A sturdy shield",
+        "value": 100,
+        "weight": 10,
+        "can_have_multiple": false,
+        "quantity": 1,
+        "item_type": "armor",
+        "effects": {
+            "defense": 10
+        },
+        "required_level": 1
+    },
+    {
+        "id": "healing-potion-1",
+        "name": "Healing Potion",
+        "description": "A potion that restores health",
+        "value": 100,
+        "weight": 10,
+        "can_have_multiple": false,
+        "quantity": 1,
+        "item_type": "consumable",
+        "effects": {
+            "health": 10
+        },
+        "required_level": 1
+    }
+]

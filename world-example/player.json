@@ -1,0 +1,17 @@
+{
+    "name": "Player 1",
+    "health": 100,
+    "max_health": 100,
+    "energy": 100,
+    "max_energy": 100,
+    "level": 1,
+    "experience": 0,
+    "experience_to_next_level": 100,
+    "gold": 0,
+    "equipped_weapon": "sword-1",
+    "inventory": [
+        "healing-potion-1"
+    ],
+    "initial_position_x": 0,
+    "initial_position_y": 0
+}
