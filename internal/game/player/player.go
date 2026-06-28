@@ -1,9 +1,13 @@
 package player
 
-import "rpg/internal/game/item"
+import (
+	"rpg/internal/game/item"
+	"rpg/internal/game/stats"
+)
 
 type Player struct {
 	Name                  string      `json:"name"`
+	Stats                 stats.Stats `json:"stats"`
 	Health                int         `json:"health"`
 	MaxHealth             int         `json:"max_health"`
 	Energy                int         `json:"energy"`
@@ -19,6 +23,7 @@ type Player struct {
 func New(name string) Player {
 	return Player{
 		Name:                  name,
+		Stats:                 stats.NewStats(10, 10, 10, 10, 10),
 		Health:                100,
 		MaxHealth:             100,
 		Energy:                100,

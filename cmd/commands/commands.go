@@ -5,6 +5,9 @@ import (
 	"os"
 	"rpg/cmd/utils"
 	"rpg/internal/game"
+	"rpg/internal/game/battlesys"
+	"rpg/internal/game/npcs/enemy"
+	"rpg/internal/game/world/tiles"
 	"slices"
 )
 
@@ -24,6 +27,7 @@ var baseCommands = []Command{
 	newCommand("exit", "Exit the game", []string{"exit", "quit"}, exitCommand),
 	newCommand("look", "Look around the current tile", []string{"look", "examine"}, lookCommand),
 	newCommand("clear", "Clear the screen", []string{"clear"}, clearCommand),
+	newCommand("attack", "Attack an enemy", []string{"attack", "fight", "kill"}, playerAttackCommand),
 }
 
 var CommandsList = append(baseCommands, newCommand("help", "Show available commands", []string{"help"}, helpCommand))
@@ -119,5 +123,44 @@ func helpCommand(_ *game.Game, args []string) error {
 		fmt.Println(command.name, "-", command.description)
 	}
 	fmt.Println("help - Show available commands")
+	return nil
+}
+
+func playerAttackCommand(g *game.Game, args []string) error {
+	currentTile := g.World.TileAt(g.PlayerPositionX, g.PlayerPositionY)
+
+	if len(currentTile.Enemies) == 0 {
+		return fmt.Errorf("no enemies on this tile")
+	}
+
+	var targetEnemy *enemy.Enemy
+	if len(args) > 1 {
+		targetEnemy = tiles.LocateEnemyBasedOnName(args[1], currentTile)
+		if targetEnemy == nil {
+			return fmt.Errorf("enemy not found")
+		}
+	} else if len(currentTile.Enemies) > 1 {
+		return fmt.Errorf("multiple enemies on this tile, please specify which one to attack")
+	} else {
+		targetEnemy = &currentTile.Enemies[0]
+	}
+
+	if targetEnemy.IsDead() {
+		return fmt.Errorf("enemy is already dead")
+	}
+
+	damage := battlesys.CalculateDamageToEnemy(targetEnemy, &g.Player)
+	if damage == 0 {
+		fmt.Println("You missed", targetEnemy.Name)
+		return nil
+	}
+
+	targetEnemy.TakeDamage(damage)
+	fmt.Printf("You hit %s for %d damage\n", targetEnemy.Name, damage)
+	if targetEnemy.IsDead() {
+		fmt.Println(targetEnemy.Name, "has been defeated")
+	} else {
+		fmt.Println(targetEnemy.Name, "has", targetEnemy.Health, "health left")
+	}
 	return nil
 }

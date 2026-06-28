@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"rpg/internal/game/item"
 	"rpg/internal/game/npcs/enemy"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -39,4 +40,17 @@ func NewRandom() Tile {
 	types := []TileType{TileTypeGrass, TileTypeWater, TileTypeSand, TileTypeRock}
 	t := types[rand.Intn(len(types))]
 	return New(string(t), t, make([]enemy.Enemy, 0), make([]item.Item, 0))
+}
+
+func LocateEnemyBasedOnName(name string, t *Tile) *enemy.Enemy {
+	formatted := strings.TrimSpace(strings.ToLower(name))
+	if formatted == "" {
+		return nil
+	}
+	for i := range t.Enemies {
+		if strings.ToLower(t.Enemies[i].Name) == formatted {
+			return &t.Enemies[i]
+		}
+	}
+	return nil
 }

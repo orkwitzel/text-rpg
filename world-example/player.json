@@ -13,5 +13,11 @@
         "healing-potion-1"
     ],
     "initial_position_x": 0,
-    "initial_position_y": 0
+    "initial_position_y": 0,
+    "stats": {
+        "attack": 10,
+        "defense": 10,
+        "intelligence": 10,
+        "luck": 10
+    }
 }

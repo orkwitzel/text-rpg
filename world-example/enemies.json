@@ -3,8 +3,12 @@
         "id": "goblin-1",
         "name": "Goblin",
         "health": 100,
-        "damage": 10,
-        "speed": 10,
+        "stats": {
+            "attack": 5,
+            "defense": 5,
+            "intelligence": 5,
+            "luck": 5
+        },
         "level": 1,
         "description": "A small, green creature with a sharp claw."
     },
@@ -12,8 +16,11 @@
         "id": "orc-1",
         "name": "Orc",
         "health": 100,
-        "damage": 10,
-        "speed": 10,
+        "stats": {
+            "attack": 10,
+            "defense": 10,
+            "intelligence": 10
+        },
         "level": 1,
         "description": "A large, red creature with a sharp axe."
     }

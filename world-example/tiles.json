@@ -3,7 +3,7 @@
         "id": "grass-1",
         "name": "Grass",
         "type": "grass",
-        "enemies": [],
+        "enemies": ["goblin-1"],
         "items": ["healing-potion-1"],
         "description": "A grassy field."
     },

@@ -9,6 +9,7 @@ import (
 	"rpg/internal/game/item"
 	"rpg/internal/game/npcs/enemy"
 	"rpg/internal/game/player"
+	"rpg/internal/game/stats"
 	"rpg/internal/game/world"
 	"rpg/internal/game/world/tiles"
 )
@@ -39,12 +40,11 @@ type worldMetadata struct {
 }
 
 type enemyMetadata struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Health int    `json:"health"`
-	Damage int    `json:"damage"`
-	Speed  int    `json:"speed"`
-	Level  int    `json:"level"`
+	ID     string      `json:"id"`
+	Name   string      `json:"name"`
+	Health int         `json:"health"`
+	Stats  stats.Stats `json:"stats"`
+	Level  int         `json:"level"`
 }
 
 type itemMetadata struct {
@@ -79,15 +79,16 @@ type tileMetadata struct {
 }
 
 type playerMetadata struct {
-	Name                  string `json:"name"`
-	Health                int    `json:"health"`
-	Energy                int    `json:"energy"`
-	Level                 int    `json:"level"`
-	Experience            int    `json:"experience"`
-	ExperienceToNextLevel int    `json:"experience_to_next_level"`
-	Gold                  int    `json:"gold"`
-	InitialPositionX      int    `json:"initial_position_x"`
-	InitialPositionY      int    `json:"initial_position_y"`
+	Name                  string      `json:"name"`
+	Health                int         `json:"health"`
+	Energy                int         `json:"energy"`
+	Level                 int         `json:"level"`
+	Experience            int         `json:"experience"`
+	ExperienceToNextLevel int         `json:"experience_to_next_level"`
+	Gold                  int         `json:"gold"`
+	InitialPositionX      int         `json:"initial_position_x"`
+	InitialPositionY      int         `json:"initial_position_y"`
+	Stats                 stats.Stats `json:"stats"`
 }
 
 func loadGenericMetadata[T any](worldDir string, filename string) T {
@@ -107,17 +108,20 @@ func loadGenericMetadata[T any](worldDir string, filename string) T {
 
 func entireWorldMetadataToGame(metadata entireWorldMetadata) game.Game {
 	p := playerMetadataToPlayer(metadata.Player)
-	tilesArr := []tiles.Tile{}
+
+	enemiesByID := make(map[string]enemy.Enemy, len(metadata.Enemies))
+	for _, enemyMeta := range metadata.Enemies {
+		enemiesByID[enemyMeta.ID] = enemyMetadataToEnemy(enemyMeta)
+	}
+
+	itemsByID := make(map[string]item.Item, len(metadata.Items))
+	for _, itemMeta := range metadata.Items {
+		itemsByID[itemMeta.ID] = itemMetadataToItem(itemMeta)
+	}
+
+	tilesArr := make([]tiles.Tile, 0, len(metadata.Tiles))
 	for _, tile := range metadata.Tiles {
-		tilesArr = append(tilesArr, tileMetadataToTile(tile))
-	}
-	enemies := []enemy.Enemy{}
-	for _, enemy := range metadata.Enemies {
-		enemies = append(enemies, enemyMetadataToEnemy(enemy))
-	}
-	items := []item.Item{}
-	for _, item := range metadata.Items {
-		items = append(items, itemMetadataToItem(item))
+		tilesArr = append(tilesArr, tileMetadataToTile(tile, enemiesByID, itemsByID))
 	}
 
 	tilesMap := make([][]tiles.Tile, 0)
@@ -149,17 +153,49 @@ func playerMetadataToPlayer(metadata playerMetadata) player.Player {
 	p.Experience = metadata.Experience
 	p.ExperienceToNextLevel = metadata.ExperienceToNextLevel
 	p.Gold = metadata.Gold
+	p.Stats = metadata.Stats
 	return p
 }
 
-func tileMetadataToTile(metadata tileMetadata) tiles.Tile {
-	return tiles.New(metadata.Name, metadata.Type, make([]enemy.Enemy, 0), make([]item.Item, 0))
+func tileMetadataToTile(metadata tileMetadata, enemiesByID map[string]enemy.Enemy, itemsByID map[string]item.Item) tiles.Tile {
+	tileEnemies := make([]enemy.Enemy, 0, len(metadata.Enemies))
+	for _, id := range metadata.Enemies {
+		e, ok := enemiesByID[id]
+		if !ok {
+			log.Fatalf("tile %s references unknown enemy %q", metadata.ID, id)
+		}
+		tileEnemies = append(tileEnemies, e)
+	}
+
+	tileItems := make([]item.Item, 0, len(metadata.Items))
+	for _, id := range metadata.Items {
+		i, ok := itemsByID[id]
+		if !ok {
+			log.Fatalf("tile %s references unknown item %q", metadata.ID, id)
+		}
+		tileItems = append(tileItems, i)
+	}
+
+	return tiles.New(metadata.Name, metadata.Type, tileEnemies, tileItems)
 }
 
 func enemyMetadataToEnemy(metadata enemyMetadata) enemy.Enemy {
-	return *enemy.NewEnemy(metadata.Name, metadata.Health, metadata.Damage, metadata.Speed, metadata.Level)
+	e := enemy.NewEnemy(metadata.Name, metadata.Stats, metadata.Health)
+	e.ID = metadata.ID
+	e.Level = metadata.Level
+	return *e
 }
 
 func itemMetadataToItem(metadata itemMetadata) item.Item {
-	return *item.NewItem(metadata.Name, metadata.Description, metadata.Value, metadata.Weight, metadata.CanHaveMultiple, metadata.Quantity)
+	i := item.NewItem(metadata.Name, metadata.Description, metadata.Value, metadata.Weight, metadata.CanHaveMultiple, metadata.Quantity)
+	i.ID = metadata.ID
+	i.ItemType = item.ItemType(metadata.ItemType)
+	i.Effects = []item.Effect{{
+		Health: metadata.Effects.Health,
+		Energy: metadata.Effects.Energy,
+		Damage: metadata.Effects.Damage,
+		Speed:  metadata.Effects.Speed,
+		Level:  metadata.Effects.Level,
+	}}
+	return *i
 }

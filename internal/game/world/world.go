@@ -36,6 +36,10 @@ func (m *WorldMap) GetTile(x int, y int) tiles.Tile {
 	return m.Tiles[y][x]
 }
 
+func (m *WorldMap) TileAt(x int, y int) *tiles.Tile {
+	return &m.Tiles[y][x]
+}
+
 func (m *WorldMap) SetTile(x int, y int, tile tiles.Tile) {
 	m.Tiles[y][x] = tile
 }

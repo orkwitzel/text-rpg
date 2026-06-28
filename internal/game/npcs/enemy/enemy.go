@@ -1,16 +1,33 @@
 package enemy
 
-import "github.com/google/uuid"
+import (
+	"rpg/internal/game/stats"
+
+	"github.com/google/uuid"
+)
 
 type Enemy struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Health int    `json:"health"`
-	Damage int    `json:"damage"`
-	Speed  int    `json:"speed"`
-	Level  int    `json:"level"`
+	ID     string      `json:"id"`
+	Name   string      `json:"name"`
+	Stats  stats.Stats `json:"stats"`
+	Level  int         `json:"level"`
+	Health int         `json:"health"`
+	Dead   bool        `json:"dead"`
 }
 
-func NewEnemy(name string, health int, damage int, speed int, level int) *Enemy {
-	return &Enemy{ID: uuid.New().String(), Name: name, Health: health, Damage: damage, Speed: speed, Level: level}
+func NewEnemy(name string, stats stats.Stats, health int) *Enemy {
+	return &Enemy{ID: uuid.New().String(),
+		Name: name, Stats: stats, Health: health,
+		Dead: false}
+}
+
+func (e *Enemy) IsDead() bool {
+	return e.Dead
+}
+
+func (e *Enemy) TakeDamage(damage int) {
+	e.Health -= damage
+	if e.Health <= 0 {
+		e.Dead = true
+	}
 }
