@@ -70,3 +70,16 @@ func InputBool() bool {
 	}
 	return b
 }
+
+var linkingWords = []string{"the", "a", "an", "of", "in", "on", "to", "from", "with", "as"}
+
+func RemoveLinkingWordsFromArgs(args []string) []string {
+	newArgs := []string{}
+	for i, arg := range linkingWords {
+		formmatedArg := strings.TrimSpace(strings.ToLower(args[i]))
+		if formmatedArg != arg {
+			newArgs = append(newArgs, arg)
+		}
+	}
+	return newArgs
+}
