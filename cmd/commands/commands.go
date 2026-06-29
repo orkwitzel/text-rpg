@@ -6,9 +6,11 @@ import (
 	"rpg/cmd/utils"
 	"rpg/internal/game"
 	"rpg/internal/game/battlesys"
+	"rpg/internal/game/item"
 	"rpg/internal/game/npcs/enemy"
 	"rpg/internal/game/world/tiles"
 	"slices"
+	"strings"
 )
 
 type Command struct {
@@ -29,6 +31,7 @@ var baseCommands = []Command{
 	newCommand("clear", "Clear the screen", []string{"clear"}, clearCommand),
 	newCommand("attack", "Attack an enemy", []string{"attack", "fight", "kill"}, playerAttackCommand),
 	newCommand("inventory", "Show the player's inventory", []string{"inventory", "inv"}, inventoryCommand),
+	newCommand("take", "Take an item from the current tile", []string{"take", "get", "pick"}, takeCommand),
 }
 
 var CommandsList = append(baseCommands, newCommand("help", "Show available commands", []string{"help"}, helpCommand))
@@ -143,7 +146,7 @@ func playerAttackCommand(g *game.Game, args []string) error {
 			return nil
 		}
 
-		targetEnemy = tiles.LocateEnemyBasedOnName(args[1], currentTile)
+		targetEnemy = tiles.LocateEnemyBasedOnName(strings.Join(args[1:], " "), currentTile)
 		if targetEnemy == nil {
 			return fmt.Errorf("enemy not found")
 		}
@@ -182,5 +185,47 @@ func inventoryCommand(g *game.Game, args []string) error {
 	for _, item := range g.Player.Inventory {
 		fmt.Println("* ", item.Name, "-", item.Description)
 	}
+	return nil
+}
+
+func takeCommand(g *game.Game, args []string) error {
+	currentTile := g.World.TileAt(g.PlayerPositionX, g.PlayerPositionY)
+
+	if len(currentTile.Items) == 0 {
+		if len(args) > 1 {
+			return fmt.Errorf("there's nothing here to take: %s", strings.Join(args[1:], " "))
+		}
+		return fmt.Errorf("there's nothing here to take")
+	}
+
+	if len(args) > 1 && strings.EqualFold(args[1], "all") {
+		items := append([]item.Item(nil), currentTile.Items...)
+		for _, it := range items {
+			if err := tiles.RemoveItemFromTile(it, currentTile); err != nil {
+				return err
+			}
+			g.Player.TakeItem(it)
+			fmt.Println("You take", it.Name)
+		}
+		return nil
+	}
+
+	var targetItem *item.Item
+	if len(args) > 1 {
+		targetItem = tiles.LocateItemBasedOfName(strings.Join(args[1:], " "), currentTile)
+		if targetItem == nil {
+			return fmt.Errorf("couldn't find %s here", strings.Join(args[1:], " "))
+		}
+	} else if len(currentTile.Items) > 1 {
+		return fmt.Errorf("multiple items here, please specify which one to take")
+	} else {
+		targetItem = &currentTile.Items[0]
+	}
+
+	if err := tiles.RemoveItemFromTile(*targetItem, currentTile); err != nil {
+		return err
+	}
+	g.Player.TakeItem(*targetItem)
+	fmt.Println("You take", targetItem.Name)
 	return nil
 }

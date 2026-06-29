@@ -44,3 +44,8 @@ func (p *Player) IsDead() bool {
 func (p *Player) TakeDamage(damage int) {
 	p.Health -= damage
 }
+
+func (p *Player) TakeItem(i item.Item) {
+	// TODO: Add max carry weight in the future
+	p.Inventory = append(p.Inventory, i)
+}
