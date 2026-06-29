@@ -28,6 +28,7 @@ var baseCommands = []Command{
 	newCommand("look", "Look around the current tile", []string{"look", "examine"}, lookCommand),
 	newCommand("clear", "Clear the screen", []string{"clear"}, clearCommand),
 	newCommand("attack", "Attack an enemy", []string{"attack", "fight", "kill"}, playerAttackCommand),
+	newCommand("inventory", "Show the player's inventory", []string{"inventory", "inv"}, inventoryCommand),
 }
 
 var CommandsList = append(baseCommands, newCommand("help", "Show available commands", []string{"help"}, helpCommand))
@@ -136,6 +137,12 @@ func playerAttackCommand(g *game.Game, args []string) error {
 
 	var targetEnemy *enemy.Enemy
 	if len(args) > 1 {
+		if args[1] == "self" || args[1] == "myself" {
+			g.Player.TakeDamage(g.Player.Health)
+			fmt.Println("You've killed yourself")
+			return nil
+		}
+
 		targetEnemy = tiles.LocateEnemyBasedOnName(args[1], currentTile)
 		if targetEnemy == nil {
 			return fmt.Errorf("enemy not found")
@@ -162,6 +169,18 @@ func playerAttackCommand(g *game.Game, args []string) error {
 		fmt.Println(targetEnemy.Name, "has been defeated")
 	} else {
 		fmt.Println(targetEnemy.Name, "has", targetEnemy.Health, "health left")
+	}
+	return nil
+}
+
+func inventoryCommand(g *game.Game, args []string) error {
+	if len(args) > 1 {
+		return fmt.Errorf("inventory command takes no arguments")
+	}
+
+	fmt.Println("Inventory:")
+	for _, item := range g.Player.Inventory {
+		fmt.Println("* ", item.Name, "-", item.Description)
 	}
 	return nil
 }

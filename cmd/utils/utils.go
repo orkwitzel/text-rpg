@@ -83,3 +83,9 @@ func RemoveLinkingWordsFromArgs(args []string) []string {
 	}
 	return newArgs
 }
+
+func SectionTitlePrint(title string) {
+	fmt.Println("--------------------------------")
+	fmt.Println(title)
+	fmt.Println("--------------------------------")
+}

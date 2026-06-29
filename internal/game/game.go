@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"rpg/cmd/utils"
 	"rpg/internal/game/battlesys"
 	"rpg/internal/game/player"
 	"rpg/internal/game/world"
@@ -55,9 +56,7 @@ func (g *Game) GetPlayerTile() tiles.Tile {
 }
 
 func (g *Game) WorldInteraction() {
-	fmt.Println("--------------------------------")
-	fmt.Println("World Interaction")
-	fmt.Println("--------------------------------")
+	utils.SectionTitlePrint("World Interaction")
 	playerTile := g.GetPlayerTile()
 	for _, enemy := range playerTile.Enemies {
 		if enemy.IsDead() {
@@ -70,10 +69,6 @@ func (g *Game) WorldInteraction() {
 		}
 		g.Player.TakeDamage(damage)
 		fmt.Println("You took", damage, "damage")
-		if g.Player.IsDead() {
-			fmt.Println("You are dead")
-			return
-		}
 		fmt.Println("You have", g.Player.Health, "health left")
 	}
 }
