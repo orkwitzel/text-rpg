@@ -21,18 +21,16 @@ type command struct {
 
 // GameInput is the main function for the game. It takes a game and a command and executes the command.
 func GameLoop(g *game.Game) {
-	for {
-		fmt.Print("Enter command: ")
-		args := splitUserInputToArgs(utils.InputString())
-		command := commands.GetCommandFromInputArgs(args)
-		if command == nil {
-			fmt.Println("Invalid command. Options are: move up, move down, move left, move right, look, clear, exit")
-			continue
-		}
-		err := command.CommandFunc(g, args)
-		if err != nil {
-			fmt.Println("Error:", err)
-			continue
-		}
+	fmt.Print("Enter command: ")
+	args := splitUserInputToArgs(utils.InputString())
+	command := commands.GetCommandFromInputArgs(args)
+	if command == nil {
+		fmt.Println("I don't know what do you mean")
+		GameLoop(g)
+	}
+	err := command.CommandFunc(g, args)
+	if err != nil {
+		fmt.Println("Error:", err)
+		GameLoop(g)
 	}
 }

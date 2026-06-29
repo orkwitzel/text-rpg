@@ -34,7 +34,7 @@ var CommandsList = append(baseCommands, newCommand("help", "Show available comma
 
 // Returns the current command based on the input arguments.
 func GetCommandFromInputArgs(args []string) *Command {
-	args = utils.RemoveLinkingWordsFromArgs(args)
+	// args = utils.RemoveLinkingWordsFromArgs(args)
 	for _, command := range CommandsList {
 		if slices.Contains(command.keywords, args[0]) {
 			return &command

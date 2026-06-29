@@ -36,3 +36,11 @@ func New(name string) Player {
 		Inventory:             make([]item.Item, 0),
 	}
 }
+
+func (p *Player) IsDead() bool {
+	return p.Health <= 0
+}
+
+func (p *Player) TakeDamage(damage int) {
+	p.Health -= damage
+}

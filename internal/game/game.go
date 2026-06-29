@@ -1,6 +1,8 @@
 package game
 
 import (
+	"fmt"
+	"rpg/internal/game/battlesys"
 	"rpg/internal/game/player"
 	"rpg/internal/game/world"
 	"rpg/internal/game/world/tiles"
@@ -50,4 +52,28 @@ func (g *Game) MovePlayer(direction Direction) {
 
 func (g *Game) GetPlayerTile() tiles.Tile {
 	return g.World.GetTile(g.PlayerPositionX, g.PlayerPositionY)
+}
+
+func (g *Game) WorldInteraction() {
+	fmt.Println("--------------------------------")
+	fmt.Println("World Interaction")
+	fmt.Println("--------------------------------")
+	playerTile := g.GetPlayerTile()
+	for _, enemy := range playerTile.Enemies {
+		if enemy.IsDead() {
+			continue
+		}
+		damage := battlesys.CalculateDamageToPlayer(&g.Player, &enemy)
+		if damage == 0 {
+			fmt.Println(enemy.Name, "missed you")
+			return
+		}
+		g.Player.TakeDamage(damage)
+		fmt.Println("You took", damage, "damage")
+		if g.Player.IsDead() {
+			fmt.Println("You are dead")
+			return
+		}
+		fmt.Println("You have", g.Player.Health, "health left")
+	}
 }

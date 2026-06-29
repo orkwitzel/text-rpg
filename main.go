@@ -10,6 +10,7 @@ func main() {
 
 	for {
 		cmd.GameLoop(&game)
+		game.WorldInteraction()
 		savefiles.SaveGame(game)
 	}
 }
